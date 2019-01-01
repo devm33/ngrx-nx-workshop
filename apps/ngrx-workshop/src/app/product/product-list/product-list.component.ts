@@ -2,21 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BasicProduct } from '@ngrx-nx-workshop/api-interfaces';
-import { RatingService } from '../rating.service';
-import { map, shareReplay } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { productsOpened } from './actions';
-import { GlobalState } from '../reducer';
 
 import * as selectors from '../selectors';
 import { CallState, LoadingState } from '../../shared/call_state';
+import { Dictionary } from '@ngrx/entity';
+import { Rating } from '../../model/rating';
 
 @Component({
   selector: 'ngrx-nx-workshop-home',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent {
   products$: Observable<BasicProduct[] | undefined> = this.store.select(
     selectors.getProducts
   );
@@ -27,22 +26,11 @@ export class ProductListComponent implements OnInit {
   // Make LoadingState be available in the template.
   readonly LoadingState = LoadingState;
 
-  customerRatings$?: Observable<Map<string, number>>;
+  customerRatings$: Observable<Dictionary<Rating>> = this.store.select(
+    selectors.getRatingsEntities
+  );
 
-  constructor(
-    private readonly store: Store<GlobalState>,
-    private readonly ratingService: RatingService
-  ) {
+  constructor(private readonly store: Store<{}>) {
     this.store.dispatch(productsOpened());
-  }
-
-  ngOnInit() {
-    this.customerRatings$ = this.ratingService.getRatings().pipe(
-      map(arr => new Map(arr)),
-      shareReplay({
-        refCount: true,
-        bufferSize: 1
-      })
-    );
   }
 }

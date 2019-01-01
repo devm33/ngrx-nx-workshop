@@ -4,23 +4,27 @@ import { EntityAdapter, createEntityAdapter, EntityState } from '@ngrx/entity';
 
 import * as apiActions from './actions';
 import { CallState, LoadingState } from '../shared/call_state';
+import { Rating } from '../model/rating';
 
-export interface GlobalState {
-  product: ProductState;
-}
+export const PRODUCT_FEATURE_KEY = 'product';
 
 export interface ProductState {
   products: EntityState<Product>;
   productsCallState: CallState;
+  customerRatings: EntityState<Rating>;
 }
 
 // If your entity's id property is different you can spesify it during
 // entity adapter creation.
 export const productAdapter: EntityAdapter<Product> = createEntityAdapter();
+export const ratingsAdapter: EntityAdapter<Rating> = createEntityAdapter({
+  selectId: rating => rating.productId
+});
 
 const initState: ProductState = {
   products: productAdapter.getInitialState(),
-  productsCallState: LoadingState.INIT
+  productsCallState: LoadingState.INIT,
+  customerRatings: ratingsAdapter.getInitialState()
 };
 
 const productsReducer = createReducer(
@@ -30,6 +34,7 @@ const productsReducer = createReducer(
     productsCallState: LoadingState.LOADING
   })),
   on(apiActions.productsFetchedSuccess, (state, { products }) => ({
+    ...state,
     products: productAdapter.upsertMany(products, state.products),
     productsCallState: LoadingState.LOADED
   })),
@@ -40,6 +45,14 @@ const productsReducer = createReducer(
   on(apiActions.productFetchedSuccess, (state, { product }) => ({
     ...state,
     products: productAdapter.upsertOne(product, state.products)
+  })),
+  on(apiActions.ratingsFetchedSuccess, (state, { ratings }) => ({
+    ...state,
+    customerRatings: ratingsAdapter.addAll(ratings, state.customerRatings)
+  })),
+  on(apiActions.ratingSingleFetchedSuccess, (state, { rating }) => ({
+    ...state,
+    customerRatings: ratingsAdapter.upsertOne(rating, state.customerRatings)
   }))
 );
 
