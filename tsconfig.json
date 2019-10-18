@@ -14,9 +14,11 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@ngrx-nx-workshop/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@ngrx-nx-workshop/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@ngrx-nx-workshop/data": ["libs/data/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
