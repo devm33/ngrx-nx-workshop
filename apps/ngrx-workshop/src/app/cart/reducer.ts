@@ -38,7 +38,19 @@ const cartReducer = createReducer(
       },
       {}
     )
-  }))
+  })),
+  on(actions.addToCartError, (state, { productId }) => {
+    const currentQuantity = state.cartItems && state.cartItems[productId];
+    const newQuantity =
+      currentQuantity && currentQuantity > 1 ? currentQuantity - 1 : undefined;
+    return {
+      ...state,
+      cartItems: {
+        ...state.cartItems,
+        [productId]: newQuantity
+      }
+    };
+  })
 );
 
 export function reducer(state: CartState | undefined, action: Action) {

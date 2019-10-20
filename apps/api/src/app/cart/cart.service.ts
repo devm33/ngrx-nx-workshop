@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { throws } from 'assert';
 
 @Injectable()
@@ -6,6 +6,9 @@ export class CartService {
   private readonly cartProducts = new Map<string, number>();
 
   addProduct(id: string): Map<string, number> {
+    if (Math.random() < 0.25) {
+      throw new HttpException('cart failed', HttpStatus.FORBIDDEN);
+    }
     const currentQuantity = this.cartProducts.get(id);
     const newQuantity = currentQuantity ? currentQuantity + 1 : 1;
     this.cartProducts.set(id, newQuantity);
