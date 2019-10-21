@@ -1,11 +1,17 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { reducer } from './product/reducer';
 
 import { AppComponent } from './app.component';
 import { RoutingModule } from './router/routing.module';
 import { CartIconModule } from './cart/cart-icon/cart-icon.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HttpClientModule } from '@angular/common/http';
+import { EffectsModule } from '@ngrx/effects';
+import { ProductEffects } from './product/effects';
+import { CartModule } from './cart/cart.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,7 +20,11 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     RoutingModule,
     CartIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    StoreModule.forRoot({ product: reducer }),
+    EffectsModule.forRoot([ProductEffects]),
+    CartModule,
+    StoreDevtoolsModule.instrument({ maxAge: 50 }),
   ],
   bootstrap: [AppComponent]
 })
