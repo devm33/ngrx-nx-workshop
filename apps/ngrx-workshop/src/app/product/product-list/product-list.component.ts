@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { productsOpened } from './actions';
 import * as selectors from '../selectors';
 import { GlobalState } from '../reducer';
+import { CallState, LoadingState } from '../../shared/call_state';
 
 @Component({
   selector: 'ngrx-nx-workshop-home',
@@ -17,6 +18,12 @@ import { GlobalState } from '../reducer';
 export class ProductListComponent implements OnInit {
   products$: Observable<BasicProduct[] | undefined> = this.store.select(selectors.getProducts);
   customerRatings$?: Observable<Map<string, number>>;
+  productsCallState$: Observable<CallState> = this.store.select(
+    selectors.getProductsCallState
+  );
+
+  // Make LoadingState be available in the template.
+  readonly LoadingState = LoadingState;
 
   constructor(
     private readonly store: Store<GlobalState>,

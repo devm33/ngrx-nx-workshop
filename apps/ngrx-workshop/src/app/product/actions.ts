@@ -18,3 +18,5 @@ export const productFetchedSuccess = createAction(
 export const productFetchedError = createAction(
   '[Product API] single product fetching error'
 );
+
+export const productsFetch = createAction('[Product Effect] fetching products');
