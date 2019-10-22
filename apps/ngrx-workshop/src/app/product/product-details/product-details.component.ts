@@ -18,56 +18,21 @@ import * as selectors from '../selectors';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss']
 })
-export class ProductDetailsComponent implements OnDestroy {
-  private readonly subscription = new Subscription();
+export class ProductDetailsComponent {
   product$ = this.store.select(selectors.getCurrentProduct);
-  private customerRatingSubject$ = new BehaviorSubject<number | undefined>(
-    undefined
-  );
-  customerRating$: Observable<
-    number | undefined
-  > = this.customerRatingSubject$.pipe(
-    shareReplay({
-      bufferSize: 1,
-      refCount: true
-    })
+  customerRating$: Observable<number | undefined> = this.store.select(
+    selectors.getCurrentProductRating
   );
 
   constructor(
-    private readonly ratingService: RatingService,
     private readonly location: Location,
     private readonly store: Store<{}>
   ) {
     this.store.dispatch(actions.productDetailsOpened());
-    this.subscription.add(
-      this.store
-        .select(selectors.getCurrentProductId)
-        .pipe(
-          filter(id => id),
-          switchMap(id => this.ratingService.getRating(id))
-        )
-        .subscribe(rating => this.customerRatingSubject$.next(rating))
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   setRating(id: string, rating: number) {
-    this.ratingService
-      .setRating({
-        id,
-        rating
-      })
-      .pipe(
-        map(arr => arr.find(([itemId]) => id === itemId)),
-        filter(
-          (idRating): idRating is NonNullable<typeof idRating> => !!idRating
-        ),
-        map(idRating => idRating[1])
-      )
-      .subscribe(newRating => this.customerRatingSubject$.next(newRating));
+    this.store.dispatch(actions.rateProduct({ productId: id, value: rating }));
   }
 
   addToCart(productId: string) {

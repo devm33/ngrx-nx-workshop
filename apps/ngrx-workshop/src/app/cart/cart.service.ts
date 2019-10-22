@@ -20,16 +20,12 @@ export class CartService {
     return this.http.post<Array<[string, number]>>(`/api/cart/add/${id}`, {});
   }
 
-  removeProduct(id: string): void {
-    this.http
-      .post<Array<[string, number]>>(`/api/cart/remove/${id}`, {})
-      .subscribe(arr => this.cartItemsSubject$.next(arr));
+  removeProduct(id: string): Observable<Array<[string, number]>> {
+    return this.http.post<Array<[string, number]>>(`/api/cart/remove/${id}`, {});
   }
 
-  removeAll(): void {
-    this.http
-      .post<Array<[string, number]>>(`/api/cart/clear`, {})
-      .subscribe(arr => this.cartItemsSubject$.next(arr));
+  removeAll(): Observable<Array<[string, number]>> {
+    return this.http.post<Array<[string, number]>>(`/api/cart/clear`, {});
   }
 
   getCartProducts(): Observable<Array<[string, number]>> {
