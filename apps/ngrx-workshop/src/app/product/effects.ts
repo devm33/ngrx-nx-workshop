@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { map, exhaustMap, catchError, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 import * as productDetailsActions from './product-details/actions';
 import * as productListActions from './product-list/actions';
+import * as cartDetailsActions from '../cart/cart-details/actions';
 import * as apiActions from './actions';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as selectors from './selectors';
@@ -25,7 +26,7 @@ export class ProductEffects {
 
     fetchProducts$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(productListActions.productsOpened),
+            ofType(productListActions.productsOpened, cartDetailsActions.pageOpened),
             exhaustMap(() =>
                 this.productService.getProducts().pipe(
                     map(products => apiActions.productsFetchedSuccess({ products })),
